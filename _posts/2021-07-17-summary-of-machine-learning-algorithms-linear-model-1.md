@@ -1,18 +1,18 @@
 ---
-title: "机器学习算法系列 - 最小二乘法/岭回归/Lasso"
+title: "机器学习算法系列 - 最小二乘法/岭回归/Lasso/Elastic-Net"
 date: 2021-07-17 16:36:31 +0900
 category: machine learning
 tags: algorithm formula
 ---
-**普通最小二乘法**(Ordinary Least Squares, OLS), **岭回归**(Ridge Regression), 最小绝对值收留和选择算子(Least absolute shrinkage and selection operator, **Lasso**), 这三个算法是线性模型中比较基本的算法. 这一篇文章里一次性对这三个进行一个简单的总结.
+**普通最小二乘法**(Ordinary Least Squares, OLS), **岭回归**(Ridge Regression), 最小绝对值收留和选择算子(Least absolute shrinkage and selection operator, **Lasso**), 弹性网络(**Elastic-Net**), 这四个算法是线性模型中比较基本的算法. 这一篇文章里一次性对这四个进行一个简单的总结.
 
-首先, 因为三者都是线性模型, 所以首先假设我们该模型为:
+首先, 因为四者都是线性模型, 所以首先假设我们该模型为:
 
 $$
 y(w,x)=w_0+w_1x_1+\dots+w_mx_m\notag
 $$
 
-其中 $w=(w_1,\dots,w_m)$ 称为系数 (coefficient), 而 $w_0$ 称为截距 (intercept), 而三个算法就是为了找出系数和截距. 使用矩阵的方式表达显得更亲切:
+其中 $w=(w_1,\dots,w_m)$ 称为系数 (coefficient), 而 $w_0$ 称为截距 (intercept), 而四个算法就是为了找出系数和截距. 使用矩阵的方式表达显得更亲切:
 
 $$
 y=\begin{bmatrix}y_1\\y_2\\\vdots\\y_n\end{bmatrix},
@@ -165,8 +165,23 @@ Scikit-learn中使用 `Lasso` 模型实现 Lasso 算法. 使用方法也是传�
 
 由于上述的特征, Lasso算法可以通过调整正则化参数, 使得一些特征量的权重参数为 0, 也就是删除这些特征量 (这也会使得计算量会变小). **因此Lasso回归也能够用来做特征选择.**  Lasso名字中的 Selection Operator 也指出了这一点. 另外和岭回归一样, 通过交叉验证, 选择出一个合适的正则化参数也是非常重要的.
 
+# Elastic-Net (2021/8/7追记)
+
+弹性网络算法是上述岭回归和Lasso回归的混合体或者说是折衷方案, 同时使用了 L1 正则化和 L2 正则化, 也确实能够达到两个算法的效果. 以公式说明:
+
+$$
+\begin{align*}
+&\min_w\left\|Xw-y\right\|_2^2+\lambda_2\left\|w\right\|_2^2+\lambda_1\left\|w\right\|_1\\
+=&\min_w\sum_{i=1}^m\left(y_i-x_i^Tw\right)^2+\lambda_2\sum_{i=1}^nw_i^2+\lambda_1\sum_{i=1}^n|w_i|
+\end{align*}
+$$
+
+弹性网络算法既能向 Lasso 回归一样处理疏矩阵的问题, 也能够保留岭回归处理病态数据和共线性问题的优点, 这里不展开具体的讨论.
+
+Scikit-Learn中提供了 `ElasticNet` 用于实现弹性网络回归模型.
+
 ---
 
-以上就是线性模型中常用的基本的三个算法. 写的内容不是很难, 但是在写的过程中我发现文章当中"统计模型" 以及 "机器学习" 的内容似乎混杂在了一起. 这不禁让我对这两者的区别产生了思考, 所以这篇文章花了相当长的时间. 估计之后会写一篇新的文章, 以总结自己针对两者的区别的调查和思考.
+以上就是线性模型中常用的基本的四个算法. 写的内容不是很难, 但是在写的过程中我发现文章当中"统计模型" 以及 "机器学习" 的内容似乎混杂在了一起. 这不禁让我对这两者的区别产生了思考, 所以这篇文章花了相当长的时间. 估计之后会写一篇新的文章, 以总结自己针对两者的区别的调查和思考.
 
 [^1]: 这篇文章暂时不涉及求取最小值的方法, 多是采用梯度下降法.
